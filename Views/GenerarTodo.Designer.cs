@@ -491,7 +491,7 @@
             Controls.Add(gbBaremos);
             Controls.Add(btnGenerarLibros);
             Name = "GenerarTodo";
-            Text = "Generar Libro Calidad";
+            Text = "Generar Todo";
             gbArchivos.ResumeLayout(false);
             gbArchivos.PerformLayout();
             gbBaremos.ResumeLayout(false);

@@ -36,12 +36,16 @@
             generarArchivoResumenToolStripMenuItem = new ToolStripMenuItem();
             generarTodoToolStripMenuItem = new ToolStripMenuItem();
             tESTToolStripMenuItem = new ToolStripMenuItem();
+            parámetrosToolStripMenuItem = new ToolStripMenuItem();
+            baremosToolStripMenuItem = new ToolStripMenuItem();
+            metasToolStripMenuItem = new ToolStripMenuItem();
+            medidoresYPFToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { multasLecturaToolStripMenuItem, tESTToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { multasLecturaToolStripMenuItem, tESTToolStripMenuItem, parámetrosToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(800, 24);
@@ -95,6 +99,31 @@
             tESTToolStripMenuItem.Text = "TEST";
             tESTToolStripMenuItem.Click += tESTToolStripMenuItem_Click;
             // 
+            // parámetrosToolStripMenuItem
+            // 
+            parámetrosToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { baremosToolStripMenuItem, metasToolStripMenuItem, medidoresYPFToolStripMenuItem });
+            parámetrosToolStripMenuItem.Name = "parámetrosToolStripMenuItem";
+            parámetrosToolStripMenuItem.Size = new Size(79, 20);
+            parámetrosToolStripMenuItem.Text = "Parámetros";
+            // 
+            // baremosToolStripMenuItem
+            // 
+            baremosToolStripMenuItem.Name = "baremosToolStripMenuItem";
+            baremosToolStripMenuItem.Size = new Size(180, 22);
+            baremosToolStripMenuItem.Text = "Baremos";
+            // 
+            // metasToolStripMenuItem
+            // 
+            metasToolStripMenuItem.Name = "metasToolStripMenuItem";
+            metasToolStripMenuItem.Size = new Size(180, 22);
+            metasToolStripMenuItem.Text = "Metas";
+            // 
+            // medidoresYPFToolStripMenuItem
+            // 
+            medidoresYPFToolStripMenuItem.Name = "medidoresYPFToolStripMenuItem";
+            medidoresYPFToolStripMenuItem.Size = new Size(180, 22);
+            medidoresYPFToolStripMenuItem.Text = "Medidores YPF";
+            // 
             // FormPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -104,7 +133,7 @@
             IsMdiContainer = true;
             MainMenuStrip = menuStrip1;
             Name = "FormPrincipal";
-            Text = "Página Principal";
+            Text = "Proceso Lectura";
             WindowState = FormWindowState.Maximized;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
@@ -122,5 +151,9 @@
         private ToolStripMenuItem generarArchivoResumenToolStripMenuItem;
         private ToolStripMenuItem generarTodoToolStripMenuItem;
         private ToolStripMenuItem tESTToolStripMenuItem;
+        private ToolStripMenuItem parámetrosToolStripMenuItem;
+        private ToolStripMenuItem baremosToolStripMenuItem;
+        private ToolStripMenuItem metasToolStripMenuItem;
+        private ToolStripMenuItem medidoresYPFToolStripMenuItem;
     }
 }

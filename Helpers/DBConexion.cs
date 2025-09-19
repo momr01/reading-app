@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MathNet.Numerics.Statistics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,8 @@ namespace MultasLectura.Helpers
     public class DBConexion
     {
         private static readonly HttpClient client = new HttpClient();
+
+        public static readonly string url = "https://reading-app-api.vercel.app/api";
 
        /* private async Task ObtenerUsuariosAsync()
         {

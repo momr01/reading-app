@@ -45,6 +45,7 @@ namespace MultasLectura.LibroCalidad.Controllers
 
             using ExcelPackage libroCalDetalles = new(new FileInfo(rutaCalDetalles));
             ExcelWorksheet hojaBaseCalDetalles = libroCalDetalles.Workbook.Worksheets[0];
+           
 
             //creamos hojas nuevas del libro
             ExcelWorksheet hojaResumen = libroCalDetalles.Workbook.Worksheets.Add("Resumen");
@@ -82,6 +83,12 @@ namespace MultasLectura.LibroCalidad.Controllers
             AgregarContenidoHojaResumen(hojaBaseCalDetalles, hojaResumen, rangoCalidadDetalles, _baremos, _metas, hojaBaseCalXOp, importeCertificacion, reclamosValores);
             AgregarContenidoHojaCuadros(hojaCuadros, rangoCalidadDetalles, rangoCalXOperario);
             AgregarContenidoHojaResLecturista(hojaCantXOperario, hojaBaseCalDetalles, hojaResLecturista);
+
+
+          //  libroCalDetalles.Workbook.Worksheets[2].Name = "AAAAIII";
+            // renombrar solo en el archivo final
+          /*  hojaBaseCalDetalles.Name = "Calidad_Detalle";
+            libroCalDetalles.Workbook.Worksheets[2].Name = "AAAAIII";*/
 
             //guardar libro calidad
             libroCalDetalles.SaveAs(new FileInfo(rutaGuardar));

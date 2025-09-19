@@ -282,8 +282,8 @@ namespace MultasLectura.Views
         private async Task<List<Baremo>> ObtenerBaremosAsync()
         {
             // string url = "https://tudominio.com/api/tarifas"; // ← Cambiá esto por tu endpoint real
-            string url = "http://localhost:3500/api/baremos/getAll";
-            var response = await _httpClient.GetAsync(url);
+            // string url = "http://localhost:3500/api/baremos/getAll";
+            var response = await _httpClient.GetAsync($"{DBConexion.url}/baremos/getAll");
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();
 
@@ -295,8 +295,8 @@ namespace MultasLectura.Views
         private async Task<List<Meta>> ObtenerMetasAsync()
         {
             // string url = "https://tudominio.com/api/tarifas"; // ← Cambiá esto por tu endpoint real
-            string url = "http://localhost:3500/api/metas/getAll";
-            var response = await _httpClient.GetAsync(url);
+            // string url = "http://localhost:3500/api/metas/getAll";
+            var response = await _httpClient.GetAsync($"{DBConexion.url}/metas/getAll");
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync();
 
@@ -419,7 +419,7 @@ namespace MultasLectura.Views
             }
             else
             {
-               // lblFechasRes.Text = string.Empty; // No mostrar nada si no es válido
+                // lblFechasRes.Text = string.Empty; // No mostrar nada si no es válido
                 lblFechasRes.Text = $"ERROR";
                 lblFechasRes.ForeColor = Color.Red;
                 btnGenerarLibros.Enabled = false;

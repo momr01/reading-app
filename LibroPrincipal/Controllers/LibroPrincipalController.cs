@@ -114,7 +114,8 @@ namespace MultasLectura.LibroPrincipal.Controllers
            
            Dictionary<string, dynamic> valores = LibroPlazos(rutaPlazos, rutaGuardarPlazos);
             //  LibroResumenMulta(rutaResumen, rutaGuardarResumen, ftls, improcedencias, mes);
-           List<Grupo> improcedencias = LibroCalidad(rutaCalOperario, rutaReclamos, rutaCalidad, rutaGuardarCalidad, importeCertificacion);
+            //  List<Grupo> improcedencias = LibroCalidad(rutaCalOperario, rutaReclamos, rutaCalidad, rutaGuardarCalidad, importeCertificacion);
+           var resultado = LibroCalidad(rutaCalOperario, rutaReclamos, rutaCalidad, rutaGuardarCalidad, importeCertificacion);
 
             /*
             List<Grupo> improcedencias = new List<Grupo>
@@ -182,7 +183,7 @@ namespace MultasLectura.LibroPrincipal.Controllers
 
 };*/
             //  LibroResumenMulta(rutaResumen, rutaGuardarResumen, cantidadesFtl, improcedencias, mes);
-            improcedencias.Add(new Grupo
+            resultado.improcedencias.Add(new Grupo
             {
                 Etiqueta = "Lecturas Fuera Plazo",
                 Datos = new List<Dato>
@@ -192,7 +193,7 @@ namespace MultasLectura.LibroPrincipal.Controllers
              new Dato { Etiqueta = "$ multa", Valor = valores["multa"]},
         }
             });
-            improcedencias.Add(new Grupo
+            resultado.improcedencias.Add(new Grupo
             {
                 Etiqueta = "Bonificación Lectura",
                 Datos = new List<Dato>
@@ -203,7 +204,7 @@ namespace MultasLectura.LibroPrincipal.Controllers
         }
             });
 
-            LibroResumenMulta(rutaResumen, rutaGuardarResumen, valores["ftl"], improcedencias, nombreMes.ToUpper());
+            LibroResumenMulta(rutaResumen, rutaGuardarResumen, valores["ftl"], resultado.improcedencias, nombreMes.ToUpper());
 
             LibroReclamos(rutaReclamos, rutaGuardarReclamos);
 
@@ -211,7 +212,7 @@ namespace MultasLectura.LibroPrincipal.Controllers
 
             // Comprimir los archivos en un ZIP
             //  string zipPath = Path.Combine(Path.GetDirectoryName(rutaGuardar)!, "Exportados.zip");
-            string zipPath = Path.Combine(rutaGuardar, "Exportados.zip");
+            string zipPath = Path.Combine(rutaGuardar, $"multas_{resultado.nombreContratista}_{nombreMes}_{anioHasta}.zip");
             if (File.Exists(zipPath)) File.Delete(zipPath);
 
             using (var zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
@@ -232,7 +233,7 @@ namespace MultasLectura.LibroPrincipal.Controllers
             File.Delete(rutaGuardarReclamos);
             // File.Delete(file3);
 
-            MessageBox.Show("Archivos exportados y comprimidos correctamente.");
+           // MessageBox.Show("Archivos exportados y comprimidos correctamente.");
 
 
 
@@ -260,6 +261,7 @@ namespace MultasLectura.LibroPrincipal.Controllers
 
             using ExcelPackage libroCertificacion = new(new FileInfo(rutaCertificacion));
             ExcelWorksheet hojaBaseCertificacion = libroCertificacion.Workbook.Worksheets[0];
+            hojaBaseCertificacion.Name = "detalle_lect";
 
             //creamos hojas nuevas del libro
             ExcelWorksheet hojaResumen = libroCertificacion.Workbook.Worksheets.Add("Resumen");
@@ -280,6 +282,8 @@ namespace MultasLectura.LibroPrincipal.Controllers
             double importeFinal = GenerarExcelCertificacion(hojaResumen, hojaBaseCertificacion, fechaDesde, fechaHasta);
 
 
+            DefinirHojaActiva(libroCertificacion, hojaResumen);
+
             //guardar libro calidad
             libroCertificacion.SaveAs(new FileInfo(rutaGuardar));
             // GenerarExcelInicial(rutaGuardar);
@@ -293,6 +297,7 @@ namespace MultasLectura.LibroPrincipal.Controllers
 
             using ExcelPackage libroResumen = new(new FileInfo(rutaResumen));
             ExcelWorksheet hojaBaseResumen = libroResumen.Workbook.Worksheets[0];
+            hojaBaseResumen.Name = "detalle";
 
             //creamos hojas nuevas del libro
             ExcelWorksheet hojaResumen = libroResumen.Workbook.Worksheets.Add("Resumen");
@@ -314,6 +319,28 @@ namespace MultasLectura.LibroPrincipal.Controllers
             GenerarExcelResumen(hojaResumen, hojaBaseResumen, ftls, datos, mes);
 
 
+            // --- Hacer que "Resumen" sea la hoja visible por defecto ---
+            /* hojaResumen.Select(); // marcarla como seleccionada
+             libroResumen.Workbook.View.ActiveTab = hojaResumen.Index - 1; // ajustar pestaña activa*/
+            // --- Hacer que "Resumen" sea la hoja visible por defecto ---
+            /*   hojaResumen.Select();
+               int pos = libroResumen.Workbook.Worksheets.IndexOf(hojaResumen);
+               libroResumen.Workbook.View.ActiveTab = pos;*/
+            // Ajustar hoja visible por defecto (Resumen)
+            /* int posResumen = 0;
+             for (int i = 0; i < libroResumen.Workbook.Worksheets.Count; i++)
+             {
+                 if (libroResumen.Workbook.Worksheets[i].Name == hojaResumen.Name)
+                 {
+                     posResumen = i;
+                     break;
+                 }
+             }
+             libroResumen.Workbook.View.ActiveTab = posResumen;*/
+
+            DefinirHojaActiva(libroResumen, hojaResumen);
+
+
             //guardar libro calidad
             libroResumen.SaveAs(new FileInfo(rutaGuardar));
             // GenerarExcelInicial(rutaGuardar);
@@ -327,6 +354,7 @@ namespace MultasLectura.LibroPrincipal.Controllers
 
             using ExcelPackage libroPlazos = new(new FileInfo(rutaPlazos));
             ExcelWorksheet hojaBasePlazos = libroPlazos.Workbook.Worksheets[0];
+            hojaBasePlazos.Name = "Plazos_Lectura";
 
             //creamos hojas nuevas del libro
             ExcelWorksheet hojaResumen = libroPlazos.Workbook.Worksheets.Add("Resumen");
@@ -348,6 +376,8 @@ namespace MultasLectura.LibroPrincipal.Controllers
             //GenerarExcelInicial(hojaResumen, hojaBaseCertificacion);
 
            Dictionary<string, dynamic> valores = AgregarContenidoHojaResumen(hojaResumen, hojaBasePlazos, rangoPlazos);
+
+            DefinirHojaActiva(libroPlazos, hojaResumen);
 
 
             //guardar libro calidad
@@ -403,7 +433,62 @@ namespace MultasLectura.LibroPrincipal.Controllers
 
         }
 
-        private List<Grupo> LibroCalidad(string rutaCalXOper, string rutaReclDetalles, string rutaCalDetalles, string rutaGuardar, double importeCertificacion)
+        public static string GetFirstValueFromColumn(ExcelWorksheet worksheet, string columnLetter)
+        {
+            if (worksheet == null)
+                throw new ArgumentNullException(nameof(worksheet), "La hoja no puede ser nula.");
+
+            int colIndex = ColumnLetterToNumber(columnLetter);
+
+            int startRow = worksheet.Dimension.Start.Row;
+            int endRow = worksheet.Dimension.End.Row;
+
+            for (int row = startRow; row <= endRow; row++)
+            {
+                if(row == startRow + 1)
+                {
+                    var value = worksheet.Cells[row, colIndex].Text;
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        if (value.ToLower().Contains("symesa"))
+                        {
+                            return "SYMESA";
+                        }
+                        else if (value.ToLower().Contains("pamar"))
+                        {
+                            return "PAMAR";
+                        }
+                        else
+                        {
+                            return "ERLYFSA";
+                        }
+                    }
+                    //return value;
+                }
+
+            }
+
+            return "contratista";
+        }
+
+        /// <summary>
+        /// Convierte letra de columna en número (ej: "A"=1, "B"=2, "AA"=27).
+        /// </summary>
+        private static int ColumnLetterToNumber(string columnLetter)
+        {
+            columnLetter = columnLetter.ToUpperInvariant();
+            int sum = 0;
+            foreach (char c in columnLetter)
+            {
+                sum *= 26;
+                sum += (c - 'A' + 1);
+            }
+            return sum;
+        }
+
+
+        //private List<Grupo> LibroCalidad(string rutaCalXOper, string rutaReclDetalles, string rutaCalDetalles, string rutaGuardar, double importeCertificacion)
+             private (List<Grupo> improcedencias, string nombreContratista) LibroCalidad(string rutaCalXOper, string rutaReclDetalles, string rutaCalDetalles, string rutaGuardar, double importeCertificacion)
         {
             using ExcelPackage libroCalXOperario = new(new FileInfo(rutaCalXOper));
             ExcelWorksheet hojaBaseCalXOp = libroCalXOperario.Workbook.Worksheets[0];
@@ -413,6 +498,7 @@ namespace MultasLectura.LibroPrincipal.Controllers
 
             using ExcelPackage libroCalDetalles = new(new FileInfo(rutaCalDetalles));
             ExcelWorksheet hojaBaseCalDetalles = libroCalDetalles.Workbook.Worksheets[0];
+            hojaBaseCalDetalles.Name = "Calidad";
 
             //creamos hojas nuevas del libro
             ExcelWorksheet hojaResumen = libroCalDetalles.Workbook.Worksheets.Add("Resumen");
@@ -424,8 +510,8 @@ namespace MultasLectura.LibroPrincipal.Controllers
             //ubicacion de hojas
             /*  libroCalDetalles.Workbook.Worksheets.MoveBefore("Resumen", "calidad_detalle");
               libroCalDetalles.Workbook.Worksheets.MoveBefore("Res-Lecturista", "calidad_detalle");*/
-            libroCalDetalles.Workbook.Worksheets.MoveBefore("Resumen", "Sheet");
-            libroCalDetalles.Workbook.Worksheets.MoveBefore("Res-Lecturista", "Sheet");
+            libroCalDetalles.Workbook.Worksheets.MoveBefore("Resumen", "Calidad");
+            libroCalDetalles.Workbook.Worksheets.MoveBefore("Res-Lecturista", "Calidad");
 
 
             //Obtener rangos de las hojas que utilizaremos
@@ -454,12 +540,42 @@ namespace MultasLectura.LibroPrincipal.Controllers
             AgregarContenidoHojaCuadros(hojaCuadros, rangoCalidadDetalles, rangoCalXOperario);
             AgregarContenidoHojaResLecturista(hojaCantXOperario, hojaBaseCalDetalles, hojaResLecturista);
 
+            string nombreContratista = GetFirstValueFromColumn(hojaBaseCalXOp, "B");
+
+
+            /* int posResumen = 0;
+             for (int i = 0; i < libroCalDetalles.Workbook.Worksheets.Count; i++)
+             {
+                 if (libroCalDetalles.Workbook.Worksheets[i].Name == hojaResumen.Name)
+                 {
+                     posResumen = i;
+                     break;
+                 }
+             }
+             libroCalDetalles.Workbook.View.ActiveTab = posResumen;*/
+            DefinirHojaActiva(libroCalDetalles, hojaResumen);
+
+
             //guardar libro calidad
             libroCalDetalles.SaveAs(new FileInfo(rutaGuardar));
 
 
-            return improcedencias;
+            return ( improcedencias, nombreContratista );
 
+        }
+
+        private void DefinirHojaActiva(ExcelPackage libro, ExcelWorksheet hoja)
+        {
+            int posResumen = 0;
+            for (int i = 0; i < libro.Workbook.Worksheets.Count; i++)
+            {
+                if (libro.Workbook.Worksheets[i].Name == hoja.Name)
+                {
+                    posResumen = i;
+                    break;
+                }
+            }
+            libro.Workbook.View.ActiveTab = posResumen;
         }
 
 
@@ -622,6 +738,7 @@ namespace MultasLectura.LibroPrincipal.Controllers
 
             using ExcelPackage libroReclamos = new(new FileInfo(rutaReclamos));
             ExcelWorksheet hojaBaseReclamos = libroReclamos.Workbook.Worksheets[0];
+            hojaBaseReclamos.Name = "Reclamos";
 
             //creamos hojas nuevas del libro
             ExcelWorksheet hojaResumen = libroReclamos.Workbook.Worksheets.Add("Resumen");
@@ -646,6 +763,8 @@ namespace MultasLectura.LibroPrincipal.Controllers
 
             //creamos hoja de eliminados
            libroReclamos.Workbook.Worksheets.Add("Eliminados");
+
+            DefinirHojaActiva(libroReclamos, hojaResumen);
 
 
             //guardar libro calidad

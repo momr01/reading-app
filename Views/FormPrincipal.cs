@@ -22,6 +22,13 @@ namespace MultasLectura.Views
         {
             InitializeComponent();
             _controller = new FormPrincipalController();
+
+            generarArchivoCalidadToolStripMenuItem.Visible = false;
+            generarArchivoPlazosToolStripMenuItem.Visible = false;
+            generarArchivoReclamosToolStripMenuItem.Visible = false;
+            generarArchivoResumenToolStripMenuItem.Visible = false;
+
+            tESTToolStripMenuItem.Visible = false;
         }
 
 
